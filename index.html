@@ -175,7 +175,7 @@
             position: fixed;
             bottom: 30px;
             right: 30px;
-            z-index: 1001;
+            z-index: 2002;
             display: flex;
             flex-direction: column;
             gap: 10px;
@@ -604,16 +604,6 @@
             wishMessage.classList.remove('show');
             overlay.classList.remove('show');
             
-            if (!isPlaying) {
-                audio.play().then(() => {
-                    isPlaying = true;
-                    musicBtn.textContent = '⏸️';
-                    musicBtn.classList.add('playing');
-                }).catch(err => {
-                    console.log('Audio play failed:', err);
-                });
-            }
-            
             if (!heartsStarted) {
                 createHearts();
                 heartsStarted = true;
@@ -642,23 +632,27 @@
 
         musicBtn.addEventListener('click', function() {
             if (!isPlaying) {
-                audio.play().then(() => {
-                    isPlaying = true;
-                    musicBtn.textContent = '⏸️';
-                    musicBtn.classList.add('playing');
-                    
-                    if (!heartsStarted) {
-                        createHearts();
-                        heartsStarted = true;
-                    }
-                    if (!confettiStarted) {
-                        createConfetti();
-                        confettiStarted = true;
-                    }
-                }).catch(err => {
-                    console.log('Audio play failed:', err);
-                    alert('Musik gagal diputar. Coba refresh halaman!');
-                });
+                const playPromise = audio.play();
+                
+                if (playPromise !== undefined) {
+                    playPromise.then(() => {
+                        isPlaying = true;
+                        musicBtn.textContent = '⏸️';
+                        musicBtn.classList.add('playing');
+                        
+                        if (!heartsStarted) {
+                            createHearts();
+                            heartsStarted = true;
+                        }
+                        if (!confettiStarted) {
+                            createConfetti();
+                            confettiStarted = true;
+                        }
+                    }).catch(err => {
+                        console.log('Audio play failed:', err);
+                        alert('Musik gagal diputar. Pastikan koneksi internet stabil dan coba lagi!');
+                    });
+                }
             } else {
                 audio.pause();
                 isPlaying = false;
